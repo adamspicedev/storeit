@@ -35,7 +35,7 @@ export const calculatePercentage = (sizeInBytes: number) => {
 
 export const getFileType = (fileName: string) => {
   const extension = fileName.split(".").pop()?.toLowerCase();
-
+  console.log({ extension });
   if (!extension) return { type: "other", extension: "" };
 
   const documentExtensions = [
@@ -178,11 +178,11 @@ export const getFileIcon = (
 // APPWRITE URL UTILS
 // Construct appwrite file URL - https://appwrite.io/docs/apis/rest#images
 export const constructFileUrl = (bucketFileId: string) => {
-  return `${env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${env.NEXT_PUBLIC_APPWRITE_BUCKET}/files/${bucketFileId}/view?project=${env.NEXT_PUBLIC_APPWRITE_PROJECT}`;
+  return `${env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${env.NEXT_PUBLIC_APPWRITE_BUCKET}/files/${bucketFileId}/view?project=${env.NEXT_PUBLIC_APPWRITE_PROJECT_ID}`;
 };
 
 export const constructDownloadUrl = (bucketFileId: string) => {
-  return `${env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${env.NEXT_PUBLIC_APPWRITE_BUCKET}/files/${bucketFileId}/download?project=${env.NEXT_PUBLIC_APPWRITE_PROJECT}`;
+  return `${env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${env.NEXT_PUBLIC_APPWRITE_BUCKET}/files/${bucketFileId}/download?project=${env.NEXT_PUBLIC_APPWRITE_PROJECT_ID}`;
 };
 
 // DASHBOARD UTILS
