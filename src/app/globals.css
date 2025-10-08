@@ -12,6 +12,7 @@
   --color-blue: #56b8ff;
   --color-pink: #eea8fd;
   --color-orange: #f9ab72;
+  --color-white: #ffffff;
 
   --color-light-100: #333f4e;
   --color-light-200: #a3b2c7;
@@ -236,12 +237,12 @@
   /* =====  STYLE CLASSES */
 
   /* Root Layout */
-  @apply remove-scrollbar! bg-light-400! h-full! flex-1! overflow-auto! px-5! py-7! sm:mr-7! sm:rounded-[30px]! md:mb-7! md:px-9! md:py-10!;
+  @apply bg-light-400! h-full! w-full! flex-1! px-5! py-7! sm:mr-7! sm:rounded-[30px]! md:mb-7! md:px-9! md:py-10!;
 }
 
 @utility dashboard-container {
   /* Dashboard */
-  @apply mx-auto! grid! max-w-7xl! grid-cols-1! gap-6! md:grid-cols-2! xl:gap-10!;
+  @apply mx-auto! grid! w-full! max-w-7xl! grid-cols-1! gap-6! md:grid-cols-2! xl:gap-10!;
 }
 
 @utility dashboard-summary-list {

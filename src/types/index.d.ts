@@ -85,3 +85,29 @@ declare interface TotalSpace {
   audio: FileTypeSummary;
   other: FileTypeSummary;
 }
+
+declare interface User {
+  $id: string;
+  $createdAt: string;
+  $updatedAt: string;
+  $permissions: string[];
+  fullName: string;
+  email: string;
+  avatar: string;
+  accountId: string;
+}
+
+declare interface File {
+  $id: string;
+  name: string;
+  url: string;
+  type: FileType;
+  extension: string;
+  size: number;
+  owner: User;
+  accountId: string;
+  users: string[];
+  bucketFileId: string;
+  $createdAt: string;
+  $updatedAt: string;
+}

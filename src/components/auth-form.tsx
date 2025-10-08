@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import z from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,38 +18,56 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { createAccount, signInUser } from "@/lib/actions/user.actions";
 
-import {
-  SignInFormSchema,
-  SignUpFormSchema,
-  signInFormSchema,
-  signUpFormSchema,
-} from "../schemas";
+import OtpModal from "./opt-modal";
 
-interface AuthFormProps {
-  type: "sign-in" | "sign-up";
-}
+type FormType = "sign-in" | "sign-up";
 
-export default function AuthForm({ type }: AuthFormProps) {
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+const authFormSchema = (formType: FormType) => {
+  return z.object({
+    email: z.email(),
+    fullName:
+      formType === "sign-up"
+        ? z.string().min(2).max(50)
+        : z.string().optional(),
+  });
+};
 
-  const schema = type === "sign-in" ? signInFormSchema : signUpFormSchema;
+export default function AuthForm({ type }: { type: FormType }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [accountId, setAccountId] = useState(null);
 
-  const form = useForm<SignInFormSchema | SignUpFormSchema>({
+  const schema = authFormSchema(type);
+
+  const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
-    defaultValues:
-      type === "sign-in"
-        ? {
-            email: "",
-          }
-        : {
-            fullName: "",
-            email: "",
-          },
+    defaultValues: {
+      fullName: "",
+      email: "",
+    },
   });
 
-  const onSubmit = (data: SignInFormSchema | SignUpFormSchema) => {
-    console.log(data);
+  const onSubmit = async (values: z.infer<typeof schema>) => {
+    setIsLoading(true);
+    setErrorMessage("");
+
+    try {
+      const user =
+        type === "sign-up"
+          ? await createAccount({
+              fullName: values.fullName || "",
+              email: values.email,
+            })
+          : await signInUser({ email: values.email });
+
+      setAccountId(user.accountId);
+    } catch {
+      setErrorMessage("Failed to create account. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -107,19 +126,20 @@ export default function AuthForm({ type }: AuthFormProps) {
           <Button
             type="submit"
             className="form-submit-button"
-            disabled={form.formState.isSubmitting}
+            disabled={form.formState.isSubmitting || isLoading}
           >
             {type === "sign-in" ? "Sign In" : "Sign Up"}
 
-            {form.formState.isSubmitting && (
-              <Image
-                src="/assets/icons/loader.svg"
-                alt="loader"
-                width={24}
-                height={24}
-                className="ml-2 animate-spin"
-              />
-            )}
+            {form.formState.isSubmitting ||
+              (isLoading && (
+                <Image
+                  src="/assets/icons/loader.svg"
+                  alt="loader"
+                  width={24}
+                  height={24}
+                  className="ml-2 animate-spin"
+                />
+              ))}
           </Button>
 
           {errorMessage && <p className="error-message">*{errorMessage}</p>}
@@ -140,6 +160,10 @@ export default function AuthForm({ type }: AuthFormProps) {
           </div>
         </form>
       </Form>
+
+      {accountId && (
+        <OtpModal email={form.getValues("email")} accountId={accountId} />
+      )}
     </>
   );
 }
